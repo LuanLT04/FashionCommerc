@@ -1,0 +1,13 @@
+.form-check {
+    margin-bottom: 0.5rem;
+}
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+} 

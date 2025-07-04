@@ -1,0 +1,435 @@
+/* Modern Web3B Login Form Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f7fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.login-page-wrapper {
+    display: flex;
+    min-height: 80vh;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    background: none;
+}
+
+.login-illustration {
+    background: #e8f0fe;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 32px 0 0 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    padding: 40px 32px 40px 40px;
+    min-width: 320px;
+    max-width: 400px;
+    min-height: 480px;
+    position: relative;
+}
+
+.login-hero-img {
+    width: 180px;
+    max-width: 100%;
+    margin-bottom: 28px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.login-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.brand-title {
+    color: #2563eb;
+    font-size: 1.3em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.brand-desc {
+    color: #64748b;
+    font-size: 0.98em;
+    font-weight: 400;
+    text-align: center;
+}
+
+.login-form-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border-radius: 0 32px 32px 0;
+    min-width: 320px;
+    max-width: 420px;
+    min-height: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    background: #fff;
+}
+
+.login-form-container {
+    background: #fff;
+    border-radius: 24px;
+    padding: 38px 30px;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    animation: formAppear 0.6s ease-out;
+}
+
+.form-head {
+    color: #2563eb;
+    font-size: 2em;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-desc {
+    color: #64748b;
+    text-align: center;
+    font-size: 1em;
+    margin-bottom: 22px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+.field-column {
+    margin-bottom: 22px;
+    position: relative;
+}
+
+.field-column label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2563eb;
+    font-weight: 500;
+    font-size: 0.97em;
+}
+
+.field-column label i {
+    margin-right: 7px;
+    color: #2563eb;
+}
+
+.demo-input-box {
+    width: 100%;
+    padding: 13px 16px 13px 40px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1em;
+    background: #f8fafc;
+    color: #222;
+    transition: border 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.field-column i.input-icon {
+    position: absolute;
+    left: 13px;
+    top: 44px;
+    color: #2563eb;
+    font-size: 1.1em;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.demo-input-box:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 5px rgba(37,99,235,0.10);
+    background: #fff;
+}
+
+.demo-input-box:focus ~ i.input-icon {
+    color: #1d4ed8;
+    transform: scale(1.18) translateY(-2px);
+}
+
+.demo-input-box:not(:placeholder-shown) ~ i.input-icon {
+    color: #2563eb;
+    transform: scale(1.08);
+}
+
+.error-info, .text-danger {
+    color: #e53e3e;
+    font-size: 0.88em;
+    margin-top: 4px;
+    display: block;
+    padding-left: 40px;
+}
+
+.btnLogin {
+    width: 100%;
+    padding: 13px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.08em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.18s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+    will-change: transform, box-shadow;
+    position: relative;
+    overflow: hidden;
+}
+.btnLogin i {
+    transition: transform 0.22s cubic-bezier(.4,2,.6,1), color 0.2s;
+}
+.btnLogin:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 24px rgba(37,99,235,0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+.btnLogin:hover i {
+    transform: scale(1.18) rotate(-8deg);
+    color: #fff;
+}
+.btnLogin:active {
+    transform: scale(0.97) translateY(1px);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 22px 0 18px 0;
+}
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+.divider span {
+    padding: 0 10px;
+    color: #94a3b8;
+    font-size: 0.92em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.social-login {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 0;
+}
+.social-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 10px 0;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #222;
+    background: #f8fafc;
+    transition: border 0.2s, background 0.2s, color 0.2s;
+    cursor: pointer;
+    font-size: 1em;
+}
+.social-btn i {
+    font-size: 1.15em;
+}
+.social-btn.google {
+    border-color: #e5e7eb;
+    color: #DB4437;
+    background: #fff;
+}
+.social-btn.facebook {
+    border-color: #e5e7eb;
+    color: #4267B2;
+    background: #fff;
+}
+.social-btn:hover {
+    border-color: #2563eb;
+    background: #e0e7ef;
+    color: #2563eb;
+}
+.social-btn.google:hover {
+    color: #DB4437;
+}
+.social-btn.facebook:hover {
+    color: #4267B2;
+}
+.form-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    position: relative;
+    padding: 5px 0;
+}
+.form-link:hover {
+    color: #1d4ed8;
+}
+.login-row {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.login-row p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.98em;
+}
+@media (max-width: 900px) {
+    .login-page-wrapper {
+        flex-direction: column;
+        gap: 0;
+    }
+    .login-illustration, .login-form-side {
+        border-radius: 32px 32px 0 0;
+        min-width: unset;
+        max-width: 100vw;
+        min-height: 180px;
+        box-shadow: none;
+        padding: 24px 6vw 18px 6vw;
+    }
+    .login-form-side {
+        border-radius: 0 0 32px 32px;
+        min-height: unset;
+        box-shadow: none;
+        background: #fff;
+    }
+    .login-form-container {
+        max-width: 100vw;
+        padding: 24px 0;
+        box-shadow: none;
+    }
+}
+@media (max-width: 600px) {
+    .login-illustration, .login-form-side {
+        padding: 10px 2vw 8px 2vw;
+    }
+    .login-form-container {
+        padding: 10px 0;
+    }
+    .form-head {
+        font-size: 1.2em;
+    }
+    .brand-title {
+        font-size: 1em;
+    }
+    .brand-desc {
+        font-size: 0.9em;
+    }
+}
+
+/* Cải thiện bảng cho trang danh sách người dùng */
+table {
+    margin-top: 50px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Cải thiện hiệu ứng hover cho các nút trong bảng */
+.btn-primary, .btn-danger {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Navbar đẹp hơn */
+nav {
+    background-color: #217b7e;
+    padding: 12px 0;
+}
+
+.title {
+    color: white !important;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.nav-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: white !important;
+}
+
+.navbar-toggler-icon {
+    background-color: white;
+}
+
+/* Thêm khoảng cách cho các mục trong thanh điều hướng */
+.nav-item {
+    margin-left: 20px;
+}
+
+.pagination {
+    background: white !important;
+}
+

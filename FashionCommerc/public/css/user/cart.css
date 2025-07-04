@@ -1,0 +1,6 @@
+.cart-table th, .cart-table td { vertical-align: middle; text-align: center; }
+.cart-table img { width: 70px; border-radius: 8px; }
+.cart-summary { background: #f8f9fa; border-radius: 8px; padding: 24px; box-shadow: 0 2px 8px #eee; }
+.cart-summary .total { font-size: 1.4rem; color: #e74c3c; font-weight: bold; }
+.btn-checkout { font-size: 1.2rem; padding: 12px 0; width: 100%; }
+@media (max-width: 768px) { .cart-table th, .cart-table td { font-size: 13px; } } 

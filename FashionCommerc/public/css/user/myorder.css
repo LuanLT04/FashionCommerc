@@ -1,0 +1,9 @@
+.order-card { box-shadow: 0 2px 12px #eee; border-radius: 12px; margin-bottom: 2rem; }
+.order-header { background: #f8f9fa; border-radius: 12px 12px 0 0; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.order-status-badge { font-size: 1rem; padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; }
+.order-progress { margin: 1rem 0; }
+.order-products { background: #fff; border-radius: 0 0 12px 12px; }
+.product-item { display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid #eee; padding: 0.7rem 0; }
+.product-item:last-child { border-bottom: none; }
+.product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+@media (max-width: 600px) { .order-header { flex-direction: column; align-items: flex-start; gap: 0.7rem; } } 
