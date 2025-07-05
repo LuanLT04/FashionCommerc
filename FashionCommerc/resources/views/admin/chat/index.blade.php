@@ -45,9 +45,9 @@
                     <!-- Lịch sử chat sẽ được load ở đây -->
                 </div>
                 <div class="card-footer bg-white border-0 rounded-bottom-4">
-                    <form id="chat-form" class="d-flex gap-2 align-items-center" onsubmit="sendAdminMessage(event)">
+                    <form id="chat-form" class="d-flex gap-2 align-items-center  no-loading" onsubmit="sendAdminMessage(event)">
                         <input type="text" id="admin-message" class="form-control rounded-pill px-4" placeholder="Nhập tin nhắn..." autocomplete="off" style="height:48px;">
-                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" type="submit" style="width:48px;height:48px;font-size:1.5rem;"><i class="fa fa-paper-plane  no-loading"></i></button>
+                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" type="submit" style="width:48px;height:48px;font-size:1.5rem;"><i class="fa fa-paper-plane "></i></button>
                     </form>
                 </div>
             </div>
