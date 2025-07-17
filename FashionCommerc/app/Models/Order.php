@@ -26,7 +26,14 @@ class Order extends Model
         'created_at',
         'updated_at',
         'payment_method_id',
-    ]; 
+    ];
+
+    protected $attributes = [
+        'status' => 'pending',
+        'payment_status' => 'unpaid',
+        'shipping_fee' => 0,
+        'discount' => 0,
+    ];
 
     /**
      * Get the user that owns the order.

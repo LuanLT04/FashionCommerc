@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>Fashion Store - Modern Shopping Experience</title>
@@ -37,9 +38,81 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Debug script for avatar dropdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Bootstrap version:', typeof bootstrap !== 'undefined' ? 'loaded' : 'not loaded');
+
+            // Avatar dropdown is handled by avatar-dropdown-fix.js
+            console.log('Avatar dropdown handling delegated to avatar-dropdown-fix.js');
+        });
+    </script>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
+        /* Fix avatar dropdown */
+        .avatar-dropdown-toggle {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            text-decoration: none !important;
+        }
+
+        .dropdown-menu {
+            z-index: 1050 !important;
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            min-width: 200px !important;
+            background: white !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            padding: 0.5rem 0 !important;
+            margin: 0.125rem 0 0 !important;
+            display: none !important;
+        }
+
+        .dropdown-menu.show {
+            display: block !important;
+        }
+
+        .nav-item.dropdown {
+            position: relative !important;
+        }
+
+        /* Ensure dropdown toggle works */
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        /* Fix dropdown items */
+        .dropdown-item {
+            display: block !important;
+            width: 100% !important;
+            padding: 0.25rem 1rem !important;
+            clear: both !important;
+            font-weight: 400 !important;
+            color: #212529 !important;
+            text-align: inherit !important;
+            text-decoration: none !important;
+            white-space: nowrap !important;
+            background-color: transparent !important;
+            border: 0 !important;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa !important;
+            color: #1e2125 !important;
+        }
+
+        .dropdown-divider {
+            height: 0 !important;
+            margin: 0.5rem 0 !important;
+            overflow: hidden !important;
+            border-top: 1px solid #dee2e6 !important;
+        }
         #chatbot-popup .chatbot-message {
             padding: 10px 16px;
             border-radius: 18px;
@@ -309,12 +382,15 @@
             themeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDark = body.classList.contains('dark-mode');
-                
+
                 icon.classList.toggle('fa-sun', isDark);
                 icon.classList.toggle('fa-moon', !isDark);
-                
+
                 localStorage.setItem('theme', isDark ? 'dark-mode' : 'light-mode');
             });
+
+            // Avatar dropdown will be handled by avatar-dropdown-fix.js
+            console.log('Avatar dropdown handling delegated to avatar-dropdown-fix.js');
         });
 
         // Navbar Scroll Effect
@@ -416,8 +492,14 @@
     
     </script>
 
+    <!-- Unified Notification System -->
+    <script src="{{ asset('js/user/notifications.js') }}"></script>
+
     <!-- Dashboard User JS riêng -->
     <script src="{{ asset('js/user/dashboard_user.js') }}"></script>
+
+    <!-- Avatar Dropdown Fix -->
+    <script src="{{ asset('js/user/avatar-dropdown-fix.js') }}"></script>
 
     <!-- Chatbot Floating Button -->
     <div id="chatbot-float-btn" onclick="toggleChatbot()" title="Chat với admin" style="position: fixed; right: 32px; bottom: 32px; z-index: 99999; background: linear-gradient(90deg, #f7b42c 0%, #fc575e 100%); color: #fff; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 16px #fc575e55; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; transition: box-shadow 0.2s, background 0.2s;">

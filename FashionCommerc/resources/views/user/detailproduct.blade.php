@@ -583,7 +583,147 @@ body {
 @media (max-width: 600px) {
   .image-modal-content img { max-width: 98vw; max-height: 60vh; }
   .image-modal-content { max-width: 98vw; }
+}
+
+/* Cải thiện giao diện form trả lời */
+.reply-form {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.reply-form:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+}
+
+.reply-to-comment-form {
+    background: #f1f3f4;
+    border-radius: 10px;
+    padding: 0.8rem;
+    border: 1px solid #dee2e6;
+    margin-top: 0.5rem;
+}
+
+.reply-content {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.7rem 0.7rem 2.5rem 0.7rem;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.reply-content:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.1rem rgba(255, 107, 53, 0.15);
+    outline: none;
+}
+
+.reply-media-icons {
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.replyMediaPreview {
+    margin-top: 0.5rem;
+}
+
+.replyMediaPreview img,
+.replyMediaPreview video {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    margin-right: 8px;
+    transition: transform 0.2s ease;
+}
+
+.replyMediaPreview img:hover,
+.replyMediaPreview video:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+}
+
+/* Animation cho việc hiển thị/ẩn form trả lời */
+.reply-form,
+.reply-to-comment-form {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cải thiện button gửi trả lời */
+.submit-review-btn {
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-review-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.submit-review-btn:hover:before {
+    left: 100%;
+}
+
+/* Cải thiện hiển thị media trong bình luận */
+.comment-media-preview {
+    margin-top: 0.7rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.comment-media-preview img,
+.comment-media-preview video {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.comment-media-preview img:hover,
+.comment-media-preview video:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Loading state cho buttons */
+.submit-review-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.submit-review-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
 </style>
 
 <main class="container-fluid py-5">
@@ -886,51 +1026,163 @@ $(document).ready(function() {
         return n;
     }
     function renderRatingFilter(currentStar = 'all') {
-        let counts = {1:0,2:0,3:0,4:0,5:0};
-        allReviewsData.forEach(r => { counts[r.rating] = (counts[r.rating]||0)+1; });
-        let html = '';
-        html += `<button class="btn rating-filter-btn ${currentStar==='all' ? 'btn-outline-danger active' : 'btn-outline-secondary'}" data-star="all">Tất Cả</button>`;
-        for(let i=5;i>=1;i--) {
-            html += `<button class="btn rating-filter-btn ${currentStar==i ? 'btn-outline-danger active' : 'btn-outline-secondary'}" data-star="${i}">${i} Sao (${formatCount(counts[i])})</button>`;
+        var counts = {1:0,2:0,3:0,4:0,5:0};
+        allReviewsData.forEach(function(r) {
+            counts[r.rating] = (counts[r.rating]||0)+1;
+        });
+        var html = '';
+        var allClass = currentStar === 'all' ? 'btn-outline-danger active' : 'btn-outline-secondary';
+        html += '<button class="btn rating-filter-btn ' + allClass + '" data-star="all">Tất Cả</button>';
+
+        for(var i=5; i>=1; i--) {
+            var btnClass = currentStar == i ? 'btn-outline-danger active' : 'btn-outline-secondary';
+            html += '<button class="btn rating-filter-btn ' + btnClass + '" data-star="' + i + '">' + i + ' Sao (' + formatCount(counts[i]) + ')</button>';
         }
         $(".rating-filter").html(html);
     }
     function renderCommentTree(comment, level = 0, reviewId = null) {
-        let margin = 2 + level * 2;
-        let hasChildren = comment.children && comment.children.length > 0;
-        let html = `<div class=\"review-item review-comment-item\" style=\"margin-left: ${margin}rem; border-radius: 8px; background: none; box-shadow: none; padding: 0.7rem 0 0.7rem 0.7rem;\" data-comment-id=\"${comment.id}\" data-review-id=\"${reviewId || comment.review_id}\">\n        <div class=\"review-header\" style=\"gap: 0.5rem;\">\n            <div class=\"reviewer-avatar\" style=\"width: 30px; height: 30px; font-size: 0.8rem;\">${(comment.user ? comment.user.name : 'Ẩn danh').charAt(0).toUpperCase()}</div>\n            <div class=\"reviewer-info\">\n                <div class=\"reviewer-name\">${comment.user ? comment.user.name : 'Ẩn danh'}</div>\n                <div class=\"review-date\">${timeAgo(comment.created_at)}</div>\n            </div>\n        </div>\n        <div class=\"review-content\">${comment.content}</div>\n        ${renderMedia(comment.media)}\n        <div class=\"review-actions\" style=\"margin-top: 0.3rem;\">\n            <button class=\"action-btn like-comment-btn\" data-id=\"${comment.id}\"><i class=\"fa fa-thumbs-up\"></i> <span class=\"like-count\">${comment.likes ? comment.likes.length : 0}</span></button>\n            <button class=\"action-btn reply-comment-btn\" data-id=\"${comment.id}\"><i class=\"fa fa-reply\"></i> Trả lời</button>\n            ${hasChildren ? `<button class='toggle-children-btn btn btn-link btn-sm' data-id='${comment.id}' style='padding:0 0.5rem;'>Ẩn/Xem trả lời</button>` : ''}\n        </div>\n        <div class=\"reply-form mt-2 reply-to-comment-form\" id=\"reply-to-comment-form-${comment.id}\" style=\"display:none; margin-left:2rem;\">\n            <div style=\"position: relative;\">\n                <textarea class=\"review-textarea reply-content\" rows=\"2\" placeholder=\"Nhập trả lời...\"></textarea>\n                <div class=\"comment-media-icons reply-media-icons\" style=\"position: absolute; left: 15px; bottom: 15px; display: flex; z-index:2;\">\n                    <button type=\"button\" class=\"comment-media-btn media-btn-round addReplyImageBtn\" data-id=\"${comment.id}\" title=\"Thêm ảnh\"><i class=\"fa-regular fa-image\"></i></button>\n                    <button type=\"button\" class=\"comment-media-btn media-btn-round addReplyVideoBtn\" data-id=\"${comment.id}\" title=\"Thêm video\"><i class=\"fa-solid fa-video\"></i></button>\n                </div>\n                <input type=\"file\" class=\"replyImageInput\" data-id=\"${comment.id}\" accept=\"image/*\" multiple style=\"display:none\">\n                <input type=\"file\" class=\"replyVideoInput\" data-id=\"${comment.id}\" accept=\"video/*\" multiple style=\"display:none\">
-            </div>\n            <div class=\"comment-media-preview replyMediaPreview\" id=\"replyMediaPreview-${comment.id}\"></div>\n            <button class=\"submit-review-btn send-reply-to-comment-btn\" data-id=\"${comment.id}\" style=\"margin-top: 0.5rem;\"><i class=\"fa fa-paper-plane\"></i> Gửi trả lời</button>\n        </div>\n        <div class=\"review-children\" id=\"review-children-${comment.id}\" style=\"display:block;\">\n            ${(comment.children || []).map(child => renderCommentTree(child, level + 1, reviewId || comment.review_id)).join('')}\n        </div>\n    </div>`;
-        return html;
+        var margin = 2 + level * 2;
+        var hasChildren = comment.children && comment.children.length > 0;
+        var userName = comment.user ? comment.user.name : 'Ẩn danh';
+        var userInitial = userName.charAt(0).toUpperCase();
+        var userAvatar = comment.user && comment.user.avatar_url ? comment.user.avatar_url : null;
+        var mediaHtml = renderMedia(comment.media);
+        var likeCount = comment.likes ? comment.likes.length : 0;
+        var childrenHtml = '';
+
+        if (comment.children && comment.children.length > 0) {
+            // Hiển thị tất cả children nhưng sẽ bị ẩn bởi CSS display:none
+            childrenHtml = comment.children.map(function(child) {
+                return renderCommentTree(child, level + 1, reviewId || comment.review_id);
+            }).join('');
+        }
+
+        var toggleBtn = hasChildren ? '<button class="toggle-children-btn btn btn-link btn-sm" data-id="' + comment.id + '" style="padding:0 0.5rem;">Xem trả lời</button>' : '';
+
+        // Tạo avatar HTML
+        var avatarHtml = '';
+        if (userAvatar) {
+            avatarHtml = '<img src="' + userAvatar + '" alt="' + userName + '" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">';
+        } else {
+            avatarHtml = '<div class="reviewer-avatar" style="width: 30px; height: 30px; font-size: 0.8rem;">' + userInitial + '</div>';
+        }
+
+        return '<div class="review-item review-comment-item" style="margin-left: ' + margin + 'rem; border-radius: 8px; background: none; box-shadow: none; padding: 0.7rem 0 0.7rem 0.7rem;" data-comment-id="' + comment.id + '" data-review-id="' + (reviewId || comment.review_id) + '">' +
+            '<div class="review-header" style="gap: 0.5rem;">' +
+                '<div style="width: 30px; height: 30px;">' + avatarHtml + '</div>' +
+                '<div class="reviewer-info">' +
+                    '<div class="reviewer-name">' + userName + '</div>' +
+                    '<div class="review-date">' + timeAgo(comment.created_at) + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="review-content">' + comment.content + '</div>' +
+            mediaHtml +
+            '<div class="review-actions" style="margin-top: 0.3rem;">' +
+                '<button class="action-btn like-comment-btn" data-id="' + comment.id + '"><i class="fa fa-thumbs-up"></i> <span class="like-count">' + likeCount + '</span></button>' +
+                '<button class="action-btn reply-comment-btn" data-id="' + comment.id + '"><i class="fa fa-reply"></i> Trả lời</button>' +
+                toggleBtn +
+            '</div>' +
+            '<div class="reply-form mt-2 reply-to-comment-form" id="reply-to-comment-form-' + comment.id + '" style="display:none; margin-left:2rem;">' +
+                '<div style="position: relative;">' +
+                    '<textarea class="review-textarea reply-content" rows="2" placeholder="Nhập trả lời..."></textarea>' +
+                    '<div class="comment-media-icons reply-media-icons" style="position: absolute; left: 15px; bottom: 15px; display: flex; z-index:2;">' +
+                        '<button type="button" class="comment-media-btn media-btn-round addReplyImageBtn" data-id="' + comment.id + '" title="Thêm ảnh"><i class="fa-regular fa-image"></i></button>' +
+                        '<button type="button" class="comment-media-btn media-btn-round addReplyVideoBtn" data-id="' + comment.id + '" title="Thêm video"><i class="fa-solid fa-video"></i></button>' +
+                    '</div>' +
+                    '<input type="file" class="replyImageInput" data-id="' + comment.id + '" accept="image/*" multiple style="display:none">' +
+                    '<input type="file" class="replyVideoInput" data-id="' + comment.id + '" accept="video/*" multiple style="display:none">' +
+                '</div>' +
+                '<div class="comment-media-preview replyMediaPreview" id="replyMediaPreview-' + comment.id + '"></div>' +
+                '<button class="submit-review-btn send-reply-to-comment-btn" data-id="' + comment.id + '" style="margin-top: 0.5rem;"><i class="fa fa-paper-plane"></i> Gửi trả lời</button>' +
+            '</div>' +
+            '<div class="review-children" id="review-children-' + comment.id + '" style="display:none;">' +
+                childrenHtml +
+            '</div>' +
+        '</div>';
     }
     function renderMainReviews(reviews) {
-        let html = '';
-        let showCount = 1;
-        let total = reviews.length;
-        let toShow = reviews.slice(0, showCount);
+        var html = '';
+        var showCount = 5; // Hiển thị 5 review đầu tiên
+        var total = reviews.length;
+        var toShow = reviews.slice(0, showCount);
+
         toShow.forEach(function(review) {
             html += renderReviewItem(review);
         });
+
         if (total > showCount) {
-            html += `<div class='show-more-main-reviews-btn' style='margin: 1rem 0; text-align:center;'><a href='#' class='btn btn-link'>Xem thêm bình luận (${total - showCount})</a></div>`;
+            html += '<div class="show-more-main-reviews-btn" style="margin: 1rem 0; text-align:center;"><a href="#" class="btn btn-link">Xem thêm đánh giá (' + (total - showCount) + ')</a></div>';
         }
         return html;
     }
     function renderReviewItem(review) {
-        return `
-            <div class=\"review-item\" id=\"review-${review.id}\" data-review-id=\"${review.id}\">\n                <div class=\"review-header\">\n                    <div class=\"reviewer-avatar\">\n                        ${(review.user ? review.user.name : 'Ẩn danh').charAt(0).toUpperCase()}\n                    </div>\n                    <div class=\"reviewer-info\">\n                        <div class=\"reviewer-name\">${review.user ? review.user.name : 'Ẩn danh'}</div>\n                        <div class=\"review-rating\">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</div>\n                        <div class=\"review-date\">${timeAgo(review.created_at)}</div>\n                    </div>\n                </div>\n                <div class=\"review-content\">${review.content}</div>\n                ${renderMedia(review.media)}\n                <div class=\"review-actions\">\n                    <button class=\"action-btn like-btn\" data-id=\"${review.id}\"><i class=\"fa fa-thumbs-up\"></i> <span class=\"like-count\">${review.likes.length}</span></button>\n                    <button class=\"action-btn reply-btn\" data-id=\"${review.id}\"><i class=\"fa fa-reply\"></i> Trả lời</button>\n                </div>\n                <div class=\"review-comments mt-3\">\n                    ${renderCommentTreeLimited(review.comments || [], 0, review.id)}\n                </div>\n                <div class=\"reply-form mt-3\" id=\"reply-form-${review.id}\" style=\"display:none;\">\n                    <div style=\"position: relative;\">\n                        <textarea class=\"review-textarea reply-content\" rows=\"2\" placeholder=\"Nhập trả lời...\"></textarea>\n                        <div class=\"comment-media-icons reply-media-icons\" style=\"position: absolute; left: 15px; bottom: 15px; display: flex; z-index:2;\">\n                            <button type=\"button\" class=\"comment-media-btn media-btn-round addReplyImageBtn\" data-id=\"${review.id}\" title=\"Thêm ảnh\"><i class=\"fa-regular fa-image\"></i></button>\n                            <button type=\"button\" class=\"comment-media-btn media-btn-round addReplyVideoBtn\" data-id=\"${review.id}\" title=\"Thêm video\"><i class=\"fa-solid fa-video\"></i></button>\n                        </div>\n                        <input type=\"file\" class=\"replyImageInput\" data-id=\"${review.id}\" accept=\"image/*\" multiple style=\"display:none\">\n                        <input type=\"file\" class=\"replyVideoInput\" data-id=\"${review.id}\" accept=\"video/*\" multiple style=\"display:none\">\n                    </div>\n                    <div class=\"comment-media-preview replyMediaPreview\" id=\"replyMediaPreview-${review.id}\"></div>\n                    <button class=\"submit-review-btn send-reply-btn\" data-id=\"${review.id}\" style=\"margin-top: 1rem;\">\n                        <i class=\"fa fa-paper-plane\"></i>\n                        Gửi trả lời\n                    </button>\n                </div>\n            </div>\n        `;
+        var userName = review.user ? review.user.name : 'Ẩn danh';
+        var userInitial = userName.charAt(0).toUpperCase();
+        var userAvatar = review.user && review.user.avatar_url ? review.user.avatar_url : null;
+        var stars = '★'.repeat(review.rating) + '☆'.repeat(5-review.rating);
+        var mediaHtml = renderMedia(review.media);
+        var commentsHtml = renderCommentTreeLimited(review.comments || [], 0, review.id);
+
+        // Tạo avatar HTML
+        var avatarHtml = '';
+        if (userAvatar) {
+            avatarHtml = '<img src="' + userAvatar + '" alt="' + userName + '" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">';
+        } else {
+            avatarHtml = '<div class="reviewer-avatar">' + userInitial + '</div>';
+        }
+
+        return '<div class="review-item" id="review-' + review.id + '" data-review-id="' + review.id + '">' +
+            '<div class="review-header">' +
+                '<div style="width: 32px; height: 32px;">' + avatarHtml + '</div>' +
+                '<div class="reviewer-info">' +
+                    '<div class="reviewer-name">' + userName + '</div>' +
+                    '<div class="review-rating">' + stars + '</div>' +
+                    '<div class="review-date">' + timeAgo(review.created_at) + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="review-content">' + review.content + '</div>' +
+            mediaHtml +
+            '<div class="review-actions">' +
+                '<button class="action-btn like-btn" data-id="' + review.id + '"><i class="fa fa-thumbs-up"></i> <span class="like-count">' + review.likes.length + '</span></button>' +
+                '<button class="action-btn reply-btn" data-id="' + review.id + '"><i class="fa fa-reply"></i> Trả lời</button>' +
+            '</div>' +
+            '<div class="review-comments mt-3">' + commentsHtml + '</div>' +
+            '<div class="reply-form mt-3" id="reply-form-' + review.id + '" style="display:none;">' +
+                '<div style="position: relative;">' +
+                    '<textarea class="review-textarea reply-content" rows="2" placeholder="Nhập trả lời..."></textarea>' +
+                    '<div class="comment-media-icons reply-media-icons" style="position: absolute; left: 15px; bottom: 15px; display: flex; z-index:2;">' +
+                        '<button type="button" class="comment-media-btn media-btn-round addReplyImageBtn" data-id="' + review.id + '" title="Thêm ảnh"><i class="fa-regular fa-image"></i></button>' +
+                        '<button type="button" class="comment-media-btn media-btn-round addReplyVideoBtn" data-id="' + review.id + '" title="Thêm video"><i class="fa-solid fa-video"></i></button>' +
+                    '</div>' +
+                    '<input type="file" class="replyImageInput" data-id="' + review.id + '" accept="image/*" multiple style="display:none">' +
+                    '<input type="file" class="replyVideoInput" data-id="' + review.id + '" accept="video/*" multiple style="display:none">' +
+                '</div>' +
+                '<div class="comment-media-preview replyMediaPreview" id="replyMediaPreview-' + review.id + '"></div>' +
+                '<button class="submit-review-btn send-reply-btn" data-id="' + review.id + '" style="margin-top: 1rem;">' +
+                    '<i class="fa fa-paper-plane"></i> Gửi trả lời' +
+                '</button>' +
+            '</div>' +
+        '</div>';
     }
     function renderCommentTreeLimited(comments, level = 0, reviewId = null) {
         if (!comments || comments.length === 0) return '';
-        let html = '';
-        let showCount = 1;
-        let total = comments.length;
-        let toShow = comments.slice(0, showCount);
+
+        var html = '';
+        var showCount = 2; // Hiển thị 2 comment đầu tiên
+        var total = comments.length;
+        var toShow = comments.slice(0, showCount);
+
+        // Hiển thị comments giới hạn
         toShow.forEach(function(c) {
             html += renderCommentTree(c, level, reviewId);
         });
+
+        // Thêm nút "Xem thêm" nếu có nhiều hơn showCount comments
         if (total > showCount) {
-            html += `<div class='show-more-replies-btn' data-review-id='${reviewId}' data-level='${level}' style='margin-left:${2 + (level+1)*2}rem; color:#007bff; cursor:pointer; font-size:0.97rem; margin-top:0.3rem;'>Xem thêm trả lời (${total - showCount})</div>`;
+            var marginLeft = 2 + level * 2;
+            html += '<div class="show-more-comments-btn" data-review-id="' + reviewId + '" data-level="' + level + '" data-total="' + total + '" data-shown="' + showCount + '" style="margin-left:' + marginLeft + 'rem; color:#007bff; cursor:pointer; font-size:0.95rem; margin-top:0.5rem; padding: 0.3rem 0.5rem; border: 1px solid #007bff; border-radius: 4px; display: inline-block;">📄 Xem thêm bình luận (' + (total - showCount) + ')</div>';
         }
+
         return html;
     }
     function loadReviews(showAll = false, filterStar = 'all') {
@@ -967,15 +1219,14 @@ $(document).ready(function() {
                 }
             }
             // Luôn hiển thị tổng số sao trung bình và tổng số đánh giá từ allReviewsData
-            let allTotal = allReviewsData.length;
-            let allSum = 0;
+            var allTotal = allReviewsData.length;
+            var allSum = 0;
             allReviewsData.forEach(function(r) { allSum += r.rating; });
-            let avg = allTotal ? (allSum/allTotal) : 0;
-            $('#rating-summary-box').html(`
-                <span class="average-rating" style="font-size:2rem;font-weight:700;color:#223;">${avg.toFixed(1)}</span>
-                <span class="rating-stars" style="font-size:1.5rem;vertical-align:middle;">${renderAverageStars(avg)}</span>
-                <span id="total-reviews" style="font-size:1.1rem;color:#555;">(${allTotal} đánh giá)</span>
-            `);
+            var avg = allTotal ? (allSum/allTotal) : 0;
+            var summaryHtml = '<span class="average-rating" style="font-size:2rem;font-weight:700;color:#223;">' + avg.toFixed(1) + '</span>' +
+                '<span class="rating-stars" style="font-size:1.5rem;vertical-align:middle;">' + renderAverageStars(avg) + '</span>' +
+                '<span id="total-reviews" style="font-size:1.1rem;color:#555;">(' + allTotal + ' đánh giá)</span>';
+            $('#rating-summary-box').html(summaryHtml);
         });
     }
     
@@ -998,20 +1249,85 @@ $(document).ready(function() {
         const files = input.files;
         const preview = $('#mediaPreview');
         preview.html('');
+
         if (files && files.length) {
+            // Kiểm tra số lượng file (tối đa 5 file)
+            if (files.length > 5) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Quá nhiều file!',
+                    text: 'Bạn chỉ có thể tải lên tối đa 5 file.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                input.value = '';
+                return;
+            }
+
             Array.from(files).forEach(file => {
+                // Kiểm tra kích thước file (tối đa 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File quá lớn!',
+                        text: 'File "' + file.name + '" vượt quá 10MB. Vui lòng chọn file nhỏ hơn.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    input.value = '';
+                    return;
+                }
+
                 if (file.type.startsWith('image/')) {
+                    // Kiểm tra định dạng ảnh hợp lệ
+                    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validImageTypes.includes(file.type)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Định dạng không hỗ trợ!',
+                            text: 'Chỉ hỗ trợ các định dạng ảnh: JPG, JPEG, PNG, GIF, WEBP',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                        input.value = '';
+                        return;
+                    }
+
                     const reader = new FileReader();
                     reader.onload = function(ev) {
-                        preview.append(`<img src='${ev.target.result}' alt='img'>`);
+                        preview.append('<img src="' + ev.target.result + '" alt="img">');
                     };
                     reader.readAsDataURL(file);
                 } else if (file.type.startsWith('video/')) {
+                    // Kiểm tra định dạng video hợp lệ
+                    const validVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/webm'];
+                    if (!validVideoTypes.includes(file.type)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Định dạng không hỗ trợ!',
+                            text: 'Chỉ hỗ trợ các định dạng video: MP4, AVI, MOV, WMV, WEBM',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                        input.value = '';
+                        return;
+                    }
+
                     const reader = new FileReader();
                     reader.onload = function(ev) {
-                        preview.append(`<video src='${ev.target.result}' controls></video>`);
+                        preview.append('<video src="' + ev.target.result + '" controls></video>');
                     };
                     reader.readAsDataURL(file);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Định dạng không hỗ trợ!',
+                        text: 'Chỉ hỗ trợ file ảnh và video.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    input.value = '';
+                    return;
                 }
             });
         }
@@ -1078,20 +1394,34 @@ $(document).ready(function() {
         $('.reply-form').hide();
         $('#reply-form-' + reviewId).show();
     });
-    
-    // Send reply
-    $(document).on('click', '.send-reply-to-comment-btn', function() {
-        var commentId = $(this).data('id');
-        var replyForm = $('#reply-to-comment-form-' + commentId);
+
+    // Send reply to review (main review)
+    $(document).on('click', '.send-reply-btn', function() {
+        var reviewId = $(this).data('id');
+        var replyForm = $('#reply-form-' + reviewId);
         var content = replyForm.find('textarea.reply-content').val();
-        if(content.trim() === '') return;
+        var btn = $(this);
+
+        if(content.trim() === '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: 'Vui lòng nhập nội dung trả lời!',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        // Hiển thị loading state
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Đang gửi...');
+
         var formData = new FormData();
-        // Lấy review_id gốc từ thuộc tính data-review-id của comment cha
-        var reviewId = replyForm.closest('.review-item').attr('data-review-id');
         formData.append('review_id', reviewId);
         formData.append('content', content);
         formData.append('_token', csrfToken);
-        formData.append('parent_id', commentId);
+        formData.append('parent_id', null); // Trả lời trực tiếp review, không có parent
+
         // Thêm file ảnh
         var imgFiles = replyForm.find('.replyImageInput')[0].files;
         for (let i = 0; i < imgFiles.length; i++) {
@@ -1102,6 +1432,7 @@ $(document).ready(function() {
         for (let i = 0; i < vidFiles.length; i++) {
             formData.append('media[]', vidFiles[i]);
         }
+
         $.ajax({
             url: '/reviews/comment',
             type: 'POST',
@@ -1110,24 +1441,185 @@ $(document).ready(function() {
             contentType: false,
             xhrFields: { withCredentials: true },
             success: function() {
+                // Reset form
+                replyForm.find('textarea.reply-content').val('');
+                replyForm.find('.replyImageInput').val('');
+                replyForm.find('.replyVideoInput').val('');
+                replyForm.find('.replyMediaPreview').html('');
+                replyForm.hide();
+
+                // Hiển thị thông báo thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Trả lời của bạn đã được gửi!',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
                 loadReviews();
             },
             error: function(xhr) {
-                alert('Lỗi gửi trả lời: ' + (xhr.responseText || 'Không xác định'));
+                let errorMsg = 'Đã xảy ra lỗi, vui lòng thử lại!';
+                if(xhr.status === 401) {
+                    errorMsg = 'Bạn cần đăng nhập để trả lời đánh giá!';
+                } else if(xhr.status === 419) {
+                    errorMsg = 'Lỗi bảo mật (CSRF). Vui lòng tải lại trang!';
+                } else if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
                 }
-            });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: errorMsg,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            },
+            complete: function() {
+                // Khôi phục trạng thái button
+                btn.prop('disabled', false).html('<i class="fa fa-paper-plane"></i> Gửi trả lời');
+            }
         });
+    });
+
+    // Send reply to comment
+    $(document).on('click', '.send-reply-to-comment-btn', function() {
+        var commentId = $(this).data('id');
+        var replyForm = $('#reply-to-comment-form-' + commentId);
+        var content = replyForm.find('textarea.reply-content').val();
+        var btn = $(this);
+
+        if(content.trim() === '') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thông báo',
+                text: 'Vui lòng nhập nội dung trả lời!',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
+        }
+
+        // Hiển thị loading state
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Đang gửi...');
+
+        var formData = new FormData();
+        // Lấy review_id gốc từ thuộc tính data-review-id của comment cha
+        var reviewId = replyForm.closest('.review-item').attr('data-review-id');
+
+        // Debug logging
+        console.log('Comment ID:', commentId);
+        console.log('Review ID:', reviewId);
+        console.log('Content:', content);
+        console.log('CSRF Token:', csrfToken);
+
+        if (!reviewId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không tìm thấy ID đánh giá. Vui lòng tải lại trang!',
+                timer: 3000,
+                showConfirmButton: false
+            });
+            btn.prop('disabled', false).html('<i class="fa fa-paper-plane"></i> Gửi trả lời');
+            return;
+        }
+
+        formData.append('review_id', reviewId);
+        formData.append('content', content);
+        formData.append('_token', csrfToken);
+        formData.append('parent_id', commentId);
+
+        // Thêm file ảnh
+        var imgFiles = replyForm.find('.replyImageInput')[0].files;
+        for (let i = 0; i < imgFiles.length; i++) {
+            formData.append('media[]', imgFiles[i]);
+        }
+        // Thêm file video
+        var vidFiles = replyForm.find('.replyVideoInput')[0].files;
+        for (let i = 0; i < vidFiles.length; i++) {
+            formData.append('media[]', vidFiles[i]);
+        }
+
+        $.ajax({
+            url: '/reviews/comment',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhrFields: { withCredentials: true },
+            success: function() {
+                // Reset form
+                replyForm.find('textarea.reply-content').val('');
+                replyForm.find('.replyImageInput').val('');
+                replyForm.find('.replyVideoInput').val('');
+                replyForm.find('.replyMediaPreview').html('');
+                replyForm.hide();
+
+                // Hiển thị thông báo thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Trả lời của bạn đã được gửi!',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                loadReviews();
+            },
+            error: function(xhr) {
+                console.log('AJAX Error:', xhr);
+                console.log('Status:', xhr.status);
+                console.log('Response:', xhr.responseText);
+
+                let errorMsg = 'Đã xảy ra lỗi, vui lòng thử lại!';
+                if(xhr.status === 401) {
+                    errorMsg = 'Bạn cần đăng nhập để trả lời bình luận!';
+                } else if(xhr.status === 419) {
+                    errorMsg = 'Lỗi bảo mật (CSRF). Vui lòng tải lại trang!';
+                } else if(xhr.status === 422) {
+                    // Validation errors
+                    if(xhr.responseJSON && xhr.responseJSON.errors) {
+                        let errors = xhr.responseJSON.errors;
+                        errorMsg = Object.values(errors).flat().join(', ');
+                    } else {
+                        errorMsg = 'Dữ liệu không hợp lệ!';
+                    }
+                } else if(xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                } else if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: errorMsg,
+                    timer: 5000,
+                    showConfirmButton: true
+                });
+            },
+            complete: function() {
+                // Khôi phục trạng thái button
+                btn.prop('disabled', false).html('<i class="fa fa-paper-plane"></i> Gửi trả lời');
+            }
+        });
+    });
 
     // Toggle ẩn/hiện nhánh trả lời
     $(document).on('click', '.toggle-children-btn', function() {
         var commentId = $(this).data('id');
         var childrenBox = $('#review-children-' + commentId);
+        var $btn = $(this);
+
         if(childrenBox.is(':visible')) {
             childrenBox.slideUp(200);
-            $(this).text('Xem trả lời');
+            $btn.text('Xem trả lời');
         } else {
             childrenBox.slideDown(200);
-            $(this).text('Ẩn trả lời');
+            $btn.text('Ẩn trả lời');
         }
     });
 
@@ -1136,13 +1628,13 @@ $(document).ready(function() {
         if (!media || !media.length) return '';
         return '<div class="comment-media-preview">' + media.map(function(m) {
             if (m.type && m.type.startsWith('image/')) {
-                return `<img src='${m.url}' alt='img'>`;
+                return '<img src="' + m.url + '" alt="img">';
             } else if (m.type && m.type.startsWith('video/')) {
-                return `<video src='${m.url}' controls></video>`;
+                return '<video src="' + m.url + '" controls></video>';
             }
             return '';
         }).join('') + '</div>';
-        }
+    }
 
     function renderAverageStars(avg) {
         avg = Math.round(avg * 10) / 10;
@@ -1177,20 +1669,85 @@ $(document).ready(function() {
         const files = input.files;
         const preview = $('#replyMediaPreview-' + id);
         preview.html('');
+
         if (files && files.length) {
+            // Kiểm tra số lượng file (tối đa 5 file)
+            if (files.length > 5) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Quá nhiều file!',
+                    text: 'Bạn chỉ có thể tải lên tối đa 5 file.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                input.value = '';
+                return;
+            }
+
             Array.from(files).forEach(file => {
+                // Kiểm tra kích thước file (tối đa 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'File quá lớn!',
+                        text: 'File "' + file.name + '" vượt quá 10MB. Vui lòng chọn file nhỏ hơn.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    input.value = '';
+                    return;
+                }
+
                 if (file.type.startsWith('image/')) {
+                    // Kiểm tra định dạng ảnh hợp lệ
+                    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validImageTypes.includes(file.type)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Định dạng không hỗ trợ!',
+                            text: 'Chỉ hỗ trợ các định dạng ảnh: JPG, JPEG, PNG, GIF, WEBP',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                        input.value = '';
+                        return;
+                    }
+
                     const reader = new FileReader();
                     reader.onload = function(ev) {
-                        preview.append(`<img src='${ev.target.result}' alt='img'>`);
+                        preview.append('<img src="' + ev.target.result + '" alt="img">');
                     };
                     reader.readAsDataURL(file);
                 } else if (file.type.startsWith('video/')) {
+                    // Kiểm tra định dạng video hợp lệ
+                    const validVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/webm'];
+                    if (!validVideoTypes.includes(file.type)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Định dạng không hỗ trợ!',
+                            text: 'Chỉ hỗ trợ các định dạng video: MP4, AVI, MOV, WMV, WEBM',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                        input.value = '';
+                        return;
+                    }
+
                     const reader = new FileReader();
                     reader.onload = function(ev) {
-                        preview.append(`<video src='${ev.target.result}' controls></video>`);
+                        preview.append('<video src="' + ev.target.result + '" controls></video>');
                     };
                     reader.readAsDataURL(file);
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Định dạng không hỗ trợ!',
+                        text: 'Chỉ hỗ trợ file ảnh và video.',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    input.value = '';
+                    return;
                 }
             });
         }
@@ -1269,16 +1826,27 @@ $(document).ready(function() {
             data: form.serialize(),
             success: function(res) {
                 if(res.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đã thêm vào giỏ hàng!',
-                        text: res.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    // Cập nhật số lượng giỏ hàng trên icon nếu có
-                    if($('#cart-count').length && res.cartCount !== undefined) {
-                        $('#cart-count').text(res.cartCount);
+                    // Sử dụng hệ thống thông báo tùy chỉnh thay vì SweetAlert2
+                    if (typeof window.showCartNotification === 'function') {
+                        window.showCartNotification('Đã thêm sản phẩm vào giỏ hàng!', btn[0]);
+                    } else {
+                        // Fallback nếu function chưa load
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã thêm vào giỏ hàng!',
+                            text: res.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+
+                    // Cập nhật số lượng giỏ hàng trên badge
+                    if($('.cart-badge').length && res.cartCount !== undefined) {
+                        $('.cart-badge').text(res.cartCount);
+                        // Thêm animation cho badge
+                        $('.cart-badge').css('animation', 'none');
+                        $('.cart-badge')[0].offsetHeight; // trigger reflow
+                        $('.cart-badge').css('animation', 'badgePulse 0.3s ease-in-out');
                     }
                 } else {
                     Swal.fire({
@@ -1301,55 +1869,120 @@ $(document).ready(function() {
         });
     });
 
-    // Sự kiện xem thêm/ẩn bớt bình luận chính
+    // Sự kiện xem thêm/ẩn bớt đánh giá chính
     $(document).on('click', '.show-more-main-reviews-btn', function(e) {
         e.preventDefault();
-        let reviews = allReviewsData;
-        let html = '';
+        var reviews = allReviewsData;
+        var html = '';
         reviews.forEach(function(review) {
             html += renderReviewItem(review);
         });
-        html += `<div class='hide-main-reviews-btn' style='margin: 1rem 0; text-align:center;'><a href='#' class='btn btn-link'>Ẩn bớt bình luận</a></div>`;
+        html += '<div class="hide-main-reviews-btn" style="margin: 1rem 0; text-align:center;"><a href="#" class="btn btn-link">Ẩn bớt đánh giá</a></div>';
         $('#review-list').html(html);
     });
     $(document).on('click', '.hide-main-reviews-btn', function(e) {
         e.preventDefault();
-        let html = renderMainReviews(allReviewsData);
+        var html = renderMainReviews(allReviewsData);
         $('#review-list').html(html);
     });
 
+
+
     // Sự kiện xem thêm/ẩn bớt trả lời
     $(document).on('click', '.show-more-replies-btn', function() {
-        let reviewId = $(this).data('review-id');
-        let level = $(this).data('level');
-        // Tìm review hoặc comment cha
-        let review = allReviewsData.find(r => r.id == reviewId);
+        var reviewId = $(this).data('review-id');
+        var level = $(this).data('level');
+        var $container = $(this).parent();
+
+        // Tìm review
+        var review = allReviewsData.find(function(r) { return r.id == reviewId; });
         if (!review) return;
-        let comments = review.comments;
-        let html = '';
+
+        var comments = review.comments || [];
+        var html = '';
+
+        // Hiển thị tất cả comments
         comments.forEach(function(c) {
             html += renderCommentTree(c, level, reviewId);
         });
-        html += `<div class='hide-replies-btn' data-review-id='${reviewId}' data-level='${level}' style='margin-left:${2 + (level+1)*2}rem; color:#007bff; cursor:pointer; font-size:0.97rem; margin-top:0.3rem;'>Ẩn bớt trả lời</div>`;
-        $(this).parent().html(html);
+
+        // Thêm nút ẩn bớt
+        var marginLeft = 2 + (level+1)*2;
+        html += '<div class="hide-replies-btn" data-review-id="' + reviewId + '" data-level="' + level + '" style="margin-left:' + marginLeft + 'rem; color:#007bff; cursor:pointer; font-size:0.97rem; margin-top:0.3rem;">Ẩn bớt trả lời</div>';
+
+        $container.html(html);
     });
     $(document).on('click', '.hide-replies-btn', function() {
-        let reviewId = $(this).data('review-id');
-        let level = $(this).data('level');
-        let review = allReviewsData.find(r => r.id == reviewId);
-        if (!review) return;
-        let html = renderCommentTreeLimited(review.comments, level, reviewId);
-        $(this).parent().html(html);
-    });
-});
+        var reviewId = $(this).data('review-id');
+        var level = $(this).data('level');
+        var $container = $(this).parent();
 
-$(document).on('click', '.comment-media-preview img', function() {
-  var src = $(this).attr('src');
-  $('#imageModalImg').attr('src', src);
-  $('#imageModal').fadeIn(150);
-});
-$(document).on('click', '.image-modal-close, .image-modal-overlay', function() {
-  $('#imageModal').fadeOut(150);
+        var review = allReviewsData.find(function(r) { return r.id == reviewId; });
+        if (!review) return;
+
+        var html = renderCommentTreeLimited(review.comments, level, reviewId);
+        $container.html(html);
     });
+
+    // Xem thêm bình luận
+    $(document).on('click', '.show-more-comments-btn', function() {
+        var reviewId = $(this).data('review-id');
+        var level = $(this).data('level');
+        var total = $(this).data('total');
+        var $btn = $(this);
+
+        // Tìm review trong allReviewsData
+        var review = allReviewsData.find(function(r) {
+            return r.id == reviewId;
+        });
+
+        if (!review || !review.comments) return;
+
+        // Render tất cả comments
+        var allCommentsHtml = '';
+        review.comments.forEach(function(c) {
+            allCommentsHtml += renderCommentTree(c, level, reviewId);
+        });
+
+        // Thêm nút "Ẩn bớt bình luận"
+        var marginLeft = 2 + level * 2;
+        allCommentsHtml += '<div class="hide-comments-btn" data-review-id="' + reviewId + '" data-level="' + level + '" style="margin-left:' + marginLeft + 'rem; color:#007bff; cursor:pointer; font-size:0.95rem; margin-top:0.5rem; padding: 0.3rem 0.5rem; border: 1px solid #007bff; border-radius: 4px; display: inline-block;">📁 Ẩn bớt bình luận</div>';
+
+        // Thay thế nội dung comments container
+        var $commentsContainer = $btn.closest('.review-item').find('.review-comments');
+        $commentsContainer.html(allCommentsHtml);
+    });
+
+    // Ẩn bớt bình luận
+    $(document).on('click', '.hide-comments-btn', function() {
+        var reviewId = $(this).data('review-id');
+        var level = $(this).data('level');
+        var $btn = $(this);
+
+        // Tìm review trong allReviewsData
+        var review = allReviewsData.find(function(r) {
+            return r.id == reviewId;
+        });
+
+        if (!review || !review.comments) return;
+
+        // Render lại với giới hạn
+        var limitedCommentsHtml = renderCommentTreeLimited(review.comments, level, reviewId);
+
+        // Thay thế nội dung comments container
+        var $commentsContainer = $btn.closest('.review-item').find('.review-comments');
+        $commentsContainer.html(limitedCommentsHtml);
+    });
+
+    // Modal xem ảnh lớn
+    $(document).on('click', '.comment-media-preview img', function() {
+        var src = $(this).attr('src');
+        $('#imageModalImg').attr('src', src);
+        $('#imageModal').fadeIn(150);
+    });
+    $(document).on('click', '.image-modal-close, .image-modal-overlay', function() {
+        $('#imageModal').fadeOut(150);
+    });
+});
 </script>
 @endsection

@@ -87,6 +87,7 @@
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('js/user/notifications.js') }}"></script>
 <script src="{{ asset('js/user/cart.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

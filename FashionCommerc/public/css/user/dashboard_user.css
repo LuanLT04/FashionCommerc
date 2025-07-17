@@ -87,22 +87,27 @@ main {
     flex-direction: column;
 }
 
-/* Favorite Count Badge */
-.favorite-count-badge {
+/* Unified Badge Styling - Tất cả badge đều có màu đồng nhất */
+.favorite-count-badge,
+.cart-badge,
+.order-badge,
+.nav-link .badge {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
+    background: #ff4d4d !important; /* Màu đỏ/hồng đồng nhất */
+    color: white !important;
+    border-radius: 50% !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
     animation: badgePulse 0.3s ease-in-out;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 8px rgba(255, 77, 77, 0.3) !important;
 }
 
 @keyframes badgePulse {
@@ -111,23 +116,26 @@ main {
     100% { transform: scale(1); }
 }
 
-/* Flying Heart Animation */
-.flying-heart {
+/* Flying Animations - Màu đồng nhất cho tất cả */
+.flying-heart,
+.flying-cart,
+.flying-order {
     position: fixed;
     pointer-events: none;
     z-index: 9999;
     font-size: 20px;
-    color: var(--primary-color);
-    animation: flyToHeart 1s ease-in-out forwards;
+    color: #ff4d4d !important; /* Màu đỏ/hồng đồng nhất */
+    animation: flyToTarget 1s ease-in-out forwards;
+    filter: drop-shadow(0 2px 4px rgba(255, 77, 77, 0.3));
 }
 
-@keyframes flyToHeart {
+@keyframes flyToTarget {
     0% {
         transform: scale(1) translate(0, 0);
         opacity: 1;
     }
     50% {
-        transform: scale(1.5) translate(var(--fly-x), var(--fly-y));
+        transform: scale(1.5) translate(calc(var(--fly-x) * 0.5), calc(var(--fly-y) * 0.5));
         opacity: 0.8;
     }
     100% {
@@ -136,28 +144,78 @@ main {
     }
 }
 
-/* Success Toast */
-.success-toast {
+/* Custom Notification System */
+.custom-notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #10b981;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     z-index: 10000;
     transform: translateX(100%);
     opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    min-width: 300px;
+    backdrop-filter: blur(10px);
 }
 
-.success-toast.show {
+.custom-notification.show {
     transform: translateX(0);
     opacity: 1;
+}
+
+/* Unified Notification Colors - Tất cả thông báo đều có màu đồng nhất */
+.custom-notification.success,
+.custom-notification.cart,
+.custom-notification.order,
+.custom-notification.favorite {
+    background: linear-gradient(135deg, #ff4d4d 0%, #e63946 100%) !important;
+    color: white !important;
+    border-left: 4px solid #d62828 !important;
+}
+
+.custom-notification .notification-icon {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.custom-notification .notification-content {
+    flex: 1;
+}
+
+.custom-notification .notification-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 15px;
+}
+
+.custom-notification .notification-message {
+    opacity: 0.9;
+    font-size: 13px;
+}
+
+/* Animation cho icon */
+.custom-notification .notification-icon i {
+    animation: notificationIconPulse 0.6s ease-in-out;
+}
+
+@keyframes notificationIconPulse {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* Loading State for Favorite Button */
@@ -435,17 +493,103 @@ footer {
     font-size: 0.875rem;
 }
 
-/* Điều chỉnh badge position */
-.nav-link.position-relative .badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    transform: translate(25%, -25%);
+/* Điều chỉnh badge position - Gần với text nhưng không vỡ layout */
+.nav-link.position-relative .badge,
+.cart-badge,
+.order-badge,
+.favorite-count-badge {
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    transform: translate(30%, -30%) !important; /* Gần với text nhưng không quá sát */
+    background: #ff4d4d !important; /* Màu đỏ/hồng đồng nhất */
+    color: white !important;
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 
-.favorite-count-badge {
-    top: -5px;
-    right: -5px;
+/* Hover effect đồng nhất cho tất cả badge */
+.nav-link.position-relative .badge:hover,
+.cart-badge:hover,
+.order-badge:hover,
+.favorite-count-badge:hover {
+    transform: translate(30%, -30%) scale(1.1) !important; /* Giữ position gần với text */
+    box-shadow: 0 4px 12px rgba(255, 77, 77, 0.4) !important;
+    background: #ff4d4d !important; /* Giữ màu đồng nhất khi hover */
+}
+
+/* Đảm bảo màu không thay đổi trong mọi trạng thái */
+.nav-link:hover .badge,
+.nav-link:focus .badge,
+.nav-link:active .badge,
+.nav-link.active .badge {
+    background: #ff4d4d !important;
+    color: white !important;
+}
+
+/* Override Bootstrap badge colors */
+.badge.bg-danger,
+.badge.bg-primary,
+.badge.bg-success {
+    background: #ff4d4d !important;
+}
+
+.bg-danger,
+.bg-primary {
+    background: #ff4d4d !important;
+}
+
+/* Đặc biệt điều chỉnh cho nav-link để badge gần với text */
+.nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap; /* Không cho text xuống dòng */
+    padding: 8px 12px; /* Padding cân đối */
+}
+
+.nav-link .badge {
+    position: absolute !important;
+    top: -6px !important;
+    right: -6px !important;
+    transform: translate(30%, -30%) !important; /* Gần với text nhưng không quá sát */
+}
+
+/* Đặc biệt cho favorite icon */
+.favorite-icon .favorite-count-badge {
+    top: 2px !important;
+    right: 2px !important;
+    transform: translate(30%, -30%) !important;
+}
+
+/* Đảm bảo navbar không bị vỡ */
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    flex-shrink: 0; /* Không cho co lại */
+}
+
+.navbar-nav .nav-link {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: fit-content;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 991.98px) {
+    .navbar-nav .nav-link {
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+
+    .nav-link .badge {
+        top: -4px !important;
+        right: -4px !important;
+        transform: translate(25%, -25%) !important;
+    }
 }
 
 .avatar-dropdown-toggle:hover .avatar-circle {
@@ -485,9 +629,8 @@ footer {
     margin: 0.3rem 0;
     border-color: rgba(0, 0, 0, 0.1);
 }
-</style>
 
-<style>
+/* Navigation Search Styles */
 .nav-search {
     max-width: 350px;
     margin-right: 1rem;

@@ -168,6 +168,9 @@
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+
+    <!-- Avatar Dropdown Fix -->
+    <script src="{{ asset('js/user/avatar-dropdown-fix.js') }}"></script>
     <script>
         AOS.init({
             duration: 800,

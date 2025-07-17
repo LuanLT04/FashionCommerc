@@ -3,30 +3,55 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="index, follow">
-    <meta name="description" content="@yield('meta_description', 'Trang quản trị hệ thống bán hàng thời trang, quản lý sản phẩm, đơn hàng, người dùng, bài viết...')">
-    <meta name="keywords" content="@yield('meta_keywords', 'admin, dashboard, quản trị, bán hàng, thời trang, sản phẩm, đơn hàng, người dùng, bài viết')">
-    <meta name="author" content="Admin Panel">
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="@yield('meta_description', 'Professional admin dashboard for Fashion Commerce - Manage products, orders, customers and analytics with modern interface')">
+    <meta name="keywords" content="@yield('meta_keywords', 'admin dashboard, fashion commerce, ecommerce management, admin panel, analytics, inventory management, order management, customer management')">
+    <meta name="author" content="Fashion Commerce">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="canonical" href="{{ url()->current() }}" />
-    <!-- Open Graph -->
-    <meta property="og:title" content="@yield('title', 'Admin Panel')" />
-    <meta property="og:description" content="@yield('meta_description', 'Trang quản trị hệ thống bán hàng thời trang, quản lý sản phẩm, đơn hàng, người dùng, bài viết...')" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="@yield('title', 'Dashboard') | Fashion Commerce Admin" />
+    <meta property="og:description" content="@yield('meta_description', 'Professional admin dashboard for Fashion Commerce - Manage products, orders, customers and analytics with modern interface')" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:image" content="{{ asset('img/logo.png') }}" />
+    <meta property="og:site_name" content="Fashion Commerce Admin" />
+    <meta property="og:locale" content="vi_VN" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Dashboard') | Fashion Commerce Admin">
+    <meta name="twitter:description" content="@yield('meta_description', 'Professional admin dashboard for Fashion Commerce management')">
+    <meta name="twitter:image" content="{{ asset('img/logo.png') }}">
+
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Admin Panel",
-      "url": "{{ url('/') }}"
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Fashion Commerce Admin Dashboard",
+        "description": "Professional admin dashboard for Fashion Commerce management",
+        "url": "{{ url('/admin') }}",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "author": {
+            "@type": "Organization",
+            "name": "Fashion Commerce"
+        }
     }
     </script>
-    <title>@yield('title', 'Admin Panel - Shop Thời Trang')</title>
+    <title>@yield('title', 'Dashboard') | Fashion Commerce Admin Panel</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google Font: Source Sans Pro -->
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Modern Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -36,8 +61,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Custom Admin Dashboard CSS -->
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/logo.png') }}">
 
     <style>
         /* Màn hình loading với logo - Căn giữa hoàn hảo */
@@ -212,7 +242,7 @@
     </style>
     @yield('styles')
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed admin-dashboard">
 <!-- Màn hình loading -->
 <div id="loading-overlay">
     <div class="loading-content">

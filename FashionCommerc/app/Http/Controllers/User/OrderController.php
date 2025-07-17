@@ -60,9 +60,8 @@ class OrderController extends Controller
                 'status' => 'success',
                 'description' => 'Thanh toán đơn hàng #' . $order->id_order,
             ]);
-            // Cập nhật trạng thái đơn hàng thành completed
-            $order->status = 'completed';
-            $order->save();
+            // Đơn hàng vẫn ở trạng thái pending để admin xác nhận
+            // Không tự động chuyển thành completed
         }
 
         // Tạo chi tiết đơn hàng cho từng sản phẩm

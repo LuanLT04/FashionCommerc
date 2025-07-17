@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Avatar Dropdown - All Pages</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        #debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .avatar-circle {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Test Avatar Dropdown - All Pages</h1>
+        
+        <!-- Test Navigation Bar -->
+        <div class="test-section">
+            <h3>Test Navigation Bar</h3>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Fashion Store</a>
+                    
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center avatar-dropdown-toggle" 
+                               href="#" 
+                               id="avatarDropdown" 
+                               role="button" 
+                               data-bs-toggle="dropdown" 
+                               aria-expanded="false">
+                                <div class="avatar-circle me-2">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                Test User
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="avatarDropdown">
+                                <li>
+                                    <span class="dropdown-item-text">
+                                        <strong>Test User</strong><br>
+                                        <small style="color: #888;">test@example.com</small>
+                                    </span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Sản phẩm yêu thích</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="test-section">
+            <h3>Test Controls</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary me-2" onclick="testDropdown()">Test Manual Toggle</button>
+                    <button class="btn btn-info me-2" onclick="checkBootstrap()">Check Bootstrap</button>
+                    <button class="btn btn-success me-2" onclick="clearDebug()">Clear Debug</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Information -->
+        <div class="test-section">
+            <h3>Debug Information</h3>
+            <div id="debug-info">
+                <div>Page loaded - waiting for tests...</div>
+            </div>
+        </div>
+
+        <!-- Page Simulation -->
+        <div class="test-section">
+            <h3>Page Simulation</h3>
+            <p>This simulates different pages that might have avatar dropdown issues:</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Home Page</h5>
+                            <p class="card-text">Extends user.dashboard_user</p>
+                            <span class="badge bg-success">Should Work</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Product Detail</h5>
+                            <p class="card-text">Extends user.dashboard_user</p>
+                            <span class="badge bg-success">Should Work</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Login Page</h5>
+                            <p class="card-text">Extends layout.app</p>
+                            <span class="badge bg-warning">Fixed Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/user/avatar-dropdown-fix.js"></script>
+    
+    <script>
+        function log(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Page loaded');
+            log('Bootstrap version: ' + (typeof bootstrap !== 'undefined' ? 'loaded' : 'not loaded'));
+            
+            const avatarDropdown = document.getElementById('avatarDropdown');
+            if (avatarDropdown) {
+                log('Avatar dropdown found');
+                
+                // Test Bootstrap dropdown
+                try {
+                    const dropdown = new bootstrap.Dropdown(avatarDropdown);
+                    log('Bootstrap dropdown initialized successfully');
+                } catch (error) {
+                    log('Bootstrap dropdown error: ' + error.message);
+                }
+                
+                // Manual click handler for testing
+                avatarDropdown.addEventListener('click', function(e) {
+                    log('Avatar clicked (test handler)');
+                });
+            } else {
+                log('Avatar dropdown not found');
+            }
+        });
+        
+        function testDropdown() {
+            const avatarDropdown = document.getElementById('avatarDropdown');
+            const dropdownMenu = avatarDropdown.nextElementSibling;
+            
+            if (dropdownMenu) {
+                dropdownMenu.classList.toggle('show');
+                log('Dropdown toggled manually');
+            }
+        }
+        
+        function checkBootstrap() {
+            const info = {
+                'Bootstrap loaded': typeof bootstrap !== 'undefined',
+                'jQuery loaded': typeof $ !== 'undefined',
+                'Avatar element': !!document.getElementById('avatarDropdown'),
+                'Dropdown menu': !!document.querySelector('.dropdown-menu'),
+                'Avatar fix script': typeof initializeAvatarDropdown !== 'undefined'
+            };
+            
+            log('<strong>Check Results:</strong>');
+            Object.entries(info).forEach(([key, value]) => {
+                log(`${key}: ${value}`);
+            });
+        }
+        
+        function clearDebug() {
+            document.getElementById('debug-info').innerHTML = '<div>Debug cleared</div>';
+        }
+    </script>
+</body>
+</html>

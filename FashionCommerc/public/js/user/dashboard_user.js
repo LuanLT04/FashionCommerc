@@ -13,41 +13,111 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     let favoriteCount = 0;
 
-    // Function to show success toast
-    function showToast(message) {
-        let toast = document.getElementById('success-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'success-toast';
-            toast.className = 'success-toast';
-            toast.innerHTML = '<i class="fas fa-check-circle"></i><span id="toast-message"></span>';
-            document.body.appendChild(toast);
+    // Function to show custom notification
+    function showNotification(title, message, type = 'success', duration = 3000) {
+        // Remove existing notification if any
+        const existingNotification = document.getElementById('custom-notification');
+        if (existingNotification) {
+            existingNotification.remove();
         }
-        const toastMessage = toast.querySelector('#toast-message');
-        toastMessage.textContent = message;
-        toast.classList.add('show');
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.id = 'custom-notification';
+        notification.className = `custom-notification ${type}`;
+
+        // Set icon based on type
+        let icon = '';
+        switch(type) {
+            case 'cart':
+                icon = 'fa-shopping-cart';
+                break;
+            case 'order':
+                icon = 'fa-file-invoice';
+                break;
+            case 'favorite':
+                icon = 'fa-heart';
+                break;
+            case 'success':
+            default:
+                icon = 'fa-check-circle';
+                break;
+        }
+
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Show notification with animation
         setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2500);
+            notification.classList.add('show');
+        }, 100);
+
+        // Hide notification after duration
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 400);
+        }, duration);
     }
 
-    // Function to create flying heart animation
-    function createFlyingHeart(startX, startY, endX, endY) {
-        const heart = document.createElement('div');
-        heart.className = 'flying-heart';
-        heart.innerHTML = '<i class="fa-solid fa-heart"></i>';
-        heart.style.left = startX + 'px';
-        heart.style.top = startY + 'px';
-        heart.style.setProperty('--fly-x', (endX - startX) + 'px');
-        heart.style.setProperty('--fly-y', (endY - startY) + 'px');
-        
-        document.body.appendChild(heart);
-        
+    // Legacy function for backward compatibility
+    function showToast(message) {
+        showNotification('Thành công!', message, 'success');
+    }
+
+    // Function to create flying animations
+    function createFlyingAnimation(startX, startY, endX, endY, type = 'heart') {
+        const element = document.createElement('div');
+        let icon = '';
+        let className = '';
+
+        switch(type) {
+            case 'cart':
+                icon = '<i class="fa-solid fa-shopping-cart"></i>';
+                className = 'flying-cart';
+                break;
+            case 'order':
+                icon = '<i class="fa-solid fa-file-invoice"></i>';
+                className = 'flying-order';
+                break;
+            case 'heart':
+            default:
+                icon = '<i class="fa-solid fa-heart"></i>';
+                className = 'flying-heart';
+                break;
+        }
+
+        element.className = className;
+        element.innerHTML = icon;
+        element.style.left = startX + 'px';
+        element.style.top = startY + 'px';
+        element.style.setProperty('--fly-x', (endX - startX) + 'px');
+        element.style.setProperty('--fly-y', (endY - startY) + 'px');
+
+        document.body.appendChild(element);
+
         setTimeout(() => {
-            if (document.body.contains(heart)) {
-                document.body.removeChild(heart);
+            if (document.body.contains(element)) {
+                document.body.removeChild(element);
             }
         }, 1000);
+    }
+
+    // Legacy function for backward compatibility
+    function createFlyingHeart(startX, startY, endX, endY) {
+        createFlyingAnimation(startX, startY, endX, endY, 'heart');
     }
 
     // Function to update favorite count badge
@@ -124,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.querySelector('i').classList.add('fa-regular');
                         favoriteCount = Math.max(0, favoriteCount - 1);
                         updateFavoriteCount(favoriteCount);
-                        showToast('Đã xóa khỏi yêu thích!');
+                        showNotification('Yêu thích', 'Đã xóa khỏi danh sách yêu thích!', 'favorite');
                         loadFavoriteList();
                     }
                 }).catch(error => {
@@ -149,20 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         btn.querySelector('i').classList.add('fa-solid');
                         favoriteCount++;
                         updateFavoriteCount(favoriteCount);
-                        showToast('Đã thêm vào yêu thích!');
-                        
-                        // Create flying heart animation
-                        const rect = btn.getBoundingClientRect();
-                        const favoriteIcon = document.getElementById('dashboardFavoriteIcon');
-                        if (favoriteIcon) {
-                            const iconRect = favoriteIcon.getBoundingClientRect();
-                            createFlyingHeart(
-                                rect.left + rect.width / 2,
-                                rect.top + rect.height / 2,
-                                iconRect.left + iconRect.width / 2,
-                                iconRect.top + iconRect.height / 2
-                            );
-                        }
+                        showFavoriteNotification('Đã thêm vào danh sách yêu thích!', btn);
                         
                         loadFavoriteList();
                     }
@@ -234,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (data.success) {
                                 favoriteCount = Math.max(0, favoriteCount - 1);
                                 updateFavoriteCount(favoriteCount);
-                                showToast('Đã xóa khỏi yêu thích!');
+                                showNotification('Yêu thích', 'Đã xóa khỏi danh sách yêu thích!', 'favorite');
                                 loadFavoriteList();
                                 
                                 // Cập nhật icon heart trên grid
@@ -251,4 +308,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     }
+
+    // Make functions globally available
+    window.showNotification = showNotification;
+    window.createFlyingAnimation = createFlyingAnimation;
+    window.showCartNotification = function(message, buttonElement) {
+        showNotification('Giỏ hàng', message, 'cart');
+
+        // Create flying cart animation if button element is provided
+        if (buttonElement) {
+            const rect = buttonElement.getBoundingClientRect();
+            const cartIcon = document.querySelector('.nav-link[href*="cart"] i');
+            if (cartIcon) {
+                const iconRect = cartIcon.getBoundingClientRect();
+                createFlyingAnimation(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2,
+                    iconRect.left + iconRect.width / 2,
+                    iconRect.top + iconRect.height / 2,
+                    'cart'
+                );
+            }
+        }
+    };
+
+    window.showOrderNotification = function(message, buttonElement) {
+        showNotification('Đơn hàng', message, 'order');
+
+        // Create flying order animation if button element is provided
+        if (buttonElement) {
+            const rect = buttonElement.getBoundingClientRect();
+            const orderIcon = document.querySelector('.nav-link[href*="order"] i');
+            if (orderIcon) {
+                const iconRect = orderIcon.getBoundingClientRect();
+                createFlyingAnimation(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2,
+                    iconRect.left + iconRect.width / 2,
+                    iconRect.top + iconRect.height / 2,
+                    'order'
+                );
+            }
+        }
+    };
+
+    window.showFavoriteNotification = function(message, buttonElement) {
+        showNotification('Yêu thích', message, 'favorite');
+
+        // Create flying heart animation if button element is provided
+        if (buttonElement) {
+            const rect = buttonElement.getBoundingClientRect();
+            const favoriteIcon = document.getElementById('dashboardFavoriteIcon');
+            if (favoriteIcon) {
+                const iconRect = favoriteIcon.getBoundingClientRect();
+                createFlyingAnimation(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2,
+                    iconRect.left + iconRect.width / 2,
+                    iconRect.top + iconRect.height / 2,
+                    'heart'
+                );
+            }
+        }
+    };
 });

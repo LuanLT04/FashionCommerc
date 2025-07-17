@@ -22,6 +22,16 @@ use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ChatController;
 
+// Test route for avatar dropdown
+Route::get('/test-avatar', function () {
+    return view('test-avatar');
+});
+
+// Test route for avatar dropdown on layout.app
+Route::get('/test-avatar-app', function () {
+    return view('test-avatar-app');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -158,10 +168,10 @@ Route::get('/api/products', [ProductControllerUser::class, 'getProducts'])->name
 
 // Đánh giá sản phẩm
 Route::get('product/{id_product}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::post('reviews/comment', [ReviewController::class, 'comment'])->name('reviews.comment');
-Route::post('reviews/like', [ReviewController::class, 'like'])->name('reviews.like');
-Route::post('reviews/comment/like', [ReviewController::class, 'likeComment'])->name('reviews.comment.like');
+Route::post('reviews', [ReviewController::class, 'store'])->middleware('web')->name('reviews.store');
+Route::post('reviews/comment', [ReviewController::class, 'comment'])->middleware('web')->name('reviews.comment');
+Route::post('reviews/like', [ReviewController::class, 'like'])->middleware('web')->name('reviews.like');
+Route::post('reviews/comment/like', [ReviewController::class, 'likeComment'])->middleware('web')->name('reviews.comment.like');
 
 Route::get('category/delete/{id}', [CategoryController::class, 'deleteCategory'])->name('category.deleteCategoryGet');
 

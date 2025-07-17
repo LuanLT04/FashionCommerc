@@ -23,9 +23,15 @@ document.getElementById('cart-form').addEventListener('submit', function(e) {
     e.preventDefault();
     let address = document.getElementById('address').value;
     if (!address) {
-        Swal.fire('Vui lòng nhập địa chỉ nhận hàng!');
+        // Sử dụng thông báo tùy chỉnh thay vì SweetAlert2
+        if (typeof window.showNotification === 'function') {
+            window.showNotification('Lỗi', 'Vui lòng nhập địa chỉ nhận hàng!', 'cart');
+        } else {
+            Swal.fire('Vui lòng nhập địa chỉ nhận hàng!');
+        }
         return;
     }
+
     Swal.fire({
         title: 'Xác nhận đặt hàng?',
         html: `<b>Địa chỉ nhận hàng:</b> ${address}<br><b>Tổng tiền:</b> {{ number_format($totalAll) }}đ`,
@@ -35,7 +41,11 @@ document.getElementById('cart-form').addEventListener('submit', function(e) {
         cancelButtonText: 'Hủy'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Hiển thị thông báo đặt hàng thành công
+            if (typeof window.showOrderNotification === 'function') {
+                window.showOrderNotification('Đang xử lý đơn hàng...', document.querySelector('.btn-checkout'));
+            }
             e.target.submit();
         }
     });
-}); 
+});
